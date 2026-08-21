@@ -1,0 +1,182 @@
+RewriteEngine On
+ErrorDocument 404 /error-404.html
+ErrorDocument 403 /error-403.html
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+</IfModule>
+RewriteCond %{THE_REQUEST} \.php [NC]
+RewriteRule \.php$ - [F]
+
+RewriteRule ^install$ install.php [L]
+RewriteRule ^block$ views/error/block.php [L]
+RewriteRule ^reffer$ views/client/auth/reffer.php [L]
+RewriteRule ^verify/([A-Za-z0-9-]+)$ views/auth/verify.php?token=$1 [L]
+RewriteRule ^home$ index.php [L]
+RewriteRule ^login/google$ models/client/google.php [L]
+RewriteRule ^login$ views/client/auth/login.php [L]
+RewriteRule ^reset-password$ views/client/auth/reset_password.php [L]
+RewriteRule ^logout$ views/client/auth/logout.php [L]
+RewriteRule ^register$ views/client/auth/register.php [L]
+RewriteRule ^update$ update.php [L]
+RewriteRule ^install$ install.php [L]
+
+RewriteRule ^api/v2$ api/smmpanel.php [L]
+RewriteRule ^charge/callback$ task/card/callback.php [L]
+RewriteRule ^charge/check_card$ task/card/check_card.php [L]
+RewriteRule ^task/deposit/check$ task/cron/deposit/bank.php [L]
+RewriteRule ^task/order/update$ task/smmpanel/orders.php [L]
+RewriteRule ^task/services/sync-prices$ task/smmpanel/sync-prices.php [L]
+RewriteRule ^task/services/import$ task/smmpanel/services.php [L]
+
+RewriteRule ^user/dashboard$ views/client/home/index.php [L]
+RewriteRule ^customer/withdraw$ views/profile/withdraws.php [QSA,L]
+RewriteRule ^user/logout$ views/client/auth/logout.php [L]
+RewriteRule ^user/transaction$ views/client/transaction/index.php [L]
+RewriteRule ^user/log$ views/client/log/index.php [L]
+RewriteRule ^user/order/create$ views/client/order/create.php [L]
+RewriteRule ^user/orders$ views/client/order/orders.php [L]
+RewriteRule ^user/mass/order$ views/client/order/mass.php [L]
+RewriteRule ^services$ views/client/order/services.php [L]
+RewriteRule ^faq$ views/client/faq/index.php [L]
+RewriteRule ^contact$ views/client/contact/index.php [L]
+RewriteRule ^user/referral$ views/client/affiliates/index.php [L]
+RewriteRule ^user/deposit/transfer$ views/client/deposit/bank.php [L]
+RewriteRule ^user/deposit/card$ views/client/deposit/card.php [L]
+RewriteRule ^user/api/docs$ views/client/docs/index.php [L]
+
+RewriteRule ^user/profile$ views/client/user/profile.php [L]
+RewriteRule ^user/password-setting$ views/client/user/password-setting.php [L]
+RewriteRule ^user/two-step/security$ views/client/user/2fa.php [L]
+
+RewriteRule ^user/childpanel$ views/client/childpanel/index.php [L]
+
+RewriteRule ^model/register$ models/client/register.php [L]
+RewriteRule ^model/login$ models/client/login.php [L]
+RewriteRule ^model/forgotpassword$ models/client/forgotpasword.php [L]
+RewriteRule ^model/update/info$ models/client/updateinfo.php [L]
+RewriteRule ^model/favourite$ models/client/favourite.php [L]
+RewriteRule ^model/update/features$ models/client/features.php [L]
+RewriteRule ^model/check_coupon$ models/client/check_coupon.php [L]
+
+RewriteRule ^model/withdraw$ models/client/withdraw.php [L]
+RewriteRule ^model/authenticator$ models/client/authenticator.php [L]
+RewriteRule ^model/account/list$ models/client/account.php [L]
+RewriteRule ^model/process_payment$ models/client/process_payment.php [L]
+RewriteRule ^model/load/product$ models/client/loadproduct.php [L]
+RewriteRule ^model/card$ models/client/card.php [L]
+RewriteRule ^model/paypal$ models/client/paypal.php [L]
+RewriteRule ^model/service$ models/client/service.php [L]
+RewriteRule ^model/service/item$ models/client/items.php [L]
+RewriteRule ^model/item$ models/client/items.php [L]
+RewriteRule ^model/send/message$ models/client/sendmessage.php [L]
+RewriteRule ^model/load/categories$ models/client/load_categories.php [L]
+RewriteRule ^model/load/services$ models/client/load_services.php [L]
+RewriteRule ^model/load/service_details$ models/client/load_service_details.php [L]
+RewriteRule ^model/update_currency$ models/client/update_currency.php [L]
+RewriteRule ^model/generate_api_key$ models/client/generate_api_key.php [L]
+RewriteRule ^model/withdraw_process$ models/client/withdraw_process.php [L]
+RewriteRule ^model/process_card$ models/client/process_card.php [L]
+RewriteRule ^model/process_card$ models/client/process_card.php [L]
+RewriteRule ^model/update/profile$ models/client/update_profile.php [L]
+RewriteRule ^model/update/password$ models/client/update_password.php [L]
+RewriteRule ^model/update/2fa$ models/client/2fa.php [L]
+RewriteRule ^model/verify/2fa$ models/client/verify2fa.php [L]
+RewriteRule ^model/forgot-password$ models/client/forgot_password.php [L]
+RewriteRule ^model/reset-password$ models/client/reset_password.php [L]
+
+RewriteRule ^model/order/update$ models/client/order/update_order.php [L]
+RewriteRule ^model/order/mass-create$ models/client/mass-create.php [L]
+
+RewriteRule ^model/childpanel$ models/client/childpanel.php [L]
+
+RewriteRule ^model/admin/delete$ models/admin/delete.php [L]
+RewriteRule ^model/admin/service/api-services$ models/admin/service/api-services.php [L]
+RewriteRule ^model/admin/service/import-multiple$ models/admin/service/import-multiple.php [L]
+RewriteRule ^model/admin/service/import-single$ models/admin/service/import-single.php [L]
+RewriteRule ^model/admin/service/multiple-status$ models/admin/service/multiple-status.php [L]
+RewriteRule ^model/admin/service/multiple-destroy$ models/admin/service/multiple-destroy.php [L]
+RewriteRule ^model/admin/service/price-update$ models/admin/service/price-update.php [L]
+RewriteRule ^model/admin/add/users$ models/admin/users/add.php [L]
+RewriteRule ^model/admin/order/update$ models/admin/order/update.php [L]
+RewriteRule ^model/admin/order/edit$ models/admin/order/edit.php [L]
+RewriteRule ^model/admin/referal/update$ models/admin/referal/update.php [L]
+RewriteRule ^model/admin/provider/update$ models/admin/provider/update.php [L]
+RewriteRule ^model/admin/provider/update-price$ models/admin/provider/update-price.php [L]
+RewriteRule ^model/admin/provider/update/table$ models/admin/provider/update-table.php [L]
+RewriteRule ^model/admin/coupon/detail$ models/admin/coupon/detail.php [L]
+
+RewriteRule ^admin/dashboard$ views/admin/home/index.php [L]
+
+RewriteRule ^admin/api-provider$ views/admin/api-provider/list.php [L]
+RewriteRule ^admin/api-provider/create$ views/admin/api-provider/create.php [L]
+RewriteRule ^admin/api-provider/edit/([0-9]+)$ views/admin/api-provider/edit.php?id=$1 [L]
+
+RewriteRule ^admin/social-media$ views/admin/social/list.php [L]
+RewriteRule ^admin/social-media/create$ views/admin/social/create.php [L]
+RewriteRule ^admin/social-media/edit/([0-9]+)$ views/admin/social/edit.php?id=$1 [L]
+
+RewriteRule ^admin/category$ views/admin/category/list.php [L]
+RewriteRule ^admin/category/create$ views/admin/category/create.php [L]
+RewriteRule ^admin/category/edit/([0-9]+)$ views/admin/category/edit.php?id=$1 [L]
+
+RewriteRule ^admin/service$ views/admin/service/list.php [L]
+RewriteRule ^admin/service/create$ views/admin/service/create.php [L]
+RewriteRule ^admin/service/edit/([0-9]+)$ views/admin/service/edit.php?id=$1 [L]
+RewriteRule ^admin/service/api-services$ views/admin/service/api-services.php [L]
+
+RewriteRule ^admin/users$ views/admin/users/list.php [L]
+RewriteRule ^admin/user/edit/([0-9]+)$ views/admin/users/edit.php?id=$1 [L]
+RewriteRule ^admin/users/activity$ views/admin/users/activity.php [L]
+
+RewriteRule ^admin/transaction$ views/admin/transaction/list.php [L]
+RewriteRule ^admin/transaction/card$ views/admin/transaction/card.php [L]
+
+RewriteRule ^admin/orders/list$ views/admin/orders/list.php [L]
+
+RewriteRule ^admin/currency$ views/admin/currency/list.php [L]
+RewriteRule ^admin/currency/create$ views/admin/currency/create.php [L]
+RewriteRule ^admin/currency/edit/([0-9]+)$ views/admin/currency/edit.php?id=$1 [L]
+
+RewriteRule ^admin/referral-commission$ views/admin/referral/list.php [L]
+
+RewriteRule ^admin/payment-methods/bank$ views/admin/payment/bank/list.php [L]
+RewriteRule ^admin/payment-methods/bank/create$ views/admin/payment/bank/create.php [L]
+RewriteRule ^admin/payment-methods/bank/edit/([0-9]+)$ views/admin/payment/bank/edit.php?id=$1 [L]
+
+RewriteRule ^admin/payment-methods/card$ views/admin/payment/card/config.php [L]
+
+RewriteRule ^admin/coupons$ views/admin/coupon/list.php [L]
+
+RewriteRule ^admin/blacklist/ip$ views/admin/blacklist/ip.php [L]
+RewriteRule ^admin/blacklist/link$ views/admin/blacklist/link.php [L]
+RewriteRule ^admin/blacklist/email$ views/admin/blacklist/email.php [L]
+
+RewriteRule ^admin/settings$ views/admin/settings/settings.php [L]
+RewriteRule ^admin/basic-control$ views/admin/settings/basic-control.php [L]
+RewriteRule ^admin/theme-color$ views/admin/settings/theme-color.php [L]
+RewriteRule ^admin/logo-setting$ views/admin/settings/logo-setting.php [L]
+
+RewriteRule ^admin/socialite$ views/admin/settings/socialite.php [L]
+RewriteRule ^admin/google-config$ views/admin/settings/google-config.php [L]
+RewriteRule ^admin/plugin$ views/admin/settings/plugin.php [L]
+RewriteRule ^admin/plugin/cloudflare-captcha$ views/admin/settings/cloudflare-captcha.php [L]
+RewriteRule ^admin/plugin/telegram$ views/admin/settings/telegram.php [L]
+
+RewriteRule ^admin/contents/faq$ views/admin/settings/faq/list.php [L]
+RewriteRule ^admin/contents/item/faq$ views/admin/settings/faq/create.php [L]
+RewriteRule ^admin/contents/edit/faq/([0-9]+)$ views/admin/settings/faq/edit.php?id=$1 [L]
+
+RewriteRule ^admin/contents/contact$ views/admin/settings/contact/list.php [L]
+RewriteRule ^admin/contents/item/contact$ views/admin/settings/contact/create.php [L]
+RewriteRule ^admin/contents/edit/contact/([0-9]+)$ views/admin/settings/contact/edit.php?id=$1 [L]
+
+RewriteRule ^admin/config$ views/admin/config/index.php [L]
+
+RewriteRule ^model/admin/settings$ models/admin/settings.php [L]

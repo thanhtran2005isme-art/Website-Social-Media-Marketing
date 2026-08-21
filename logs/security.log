@@ -1,0 +1,73 @@
+[2025-04-30 10:17:02] [IP: ::1] Invalid CSRF token
+[2025-04-30 10:18:01] [IP: ::1] Invalid CSRF token
+[2025-04-30 10:21:33] [IP: ::1] Locked account access attempt: 1
+[2025-04-30 10:35:16] [IP: ::1] Locked account access attempt: 1
+[2025-04-30 10:35:31] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 229"}
+[2025-04-30 10:35:43] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 229"}
+[2025-04-30 10:36:20] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 229"}
+[2025-04-30 10:37:37] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 278"}
+[2025-04-30 10:49:34] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 285"}
+[2025-05-08 11:51:06] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-05-08 19:44:28] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-05-08 19:45:24] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-05-08 20:05:26] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-05-08 20:05:27] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-05-10 13:55:13] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-05-20 10:46:44] [IP: ::1] Telegram notification failed: {"ok":false,"error_code":404,"description":"Not Found"}
+[2025-09-28 09:41:05] [IP: 162.158.170.243] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-28 09:45:05] [IP: 172.69.176.10] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-28 12:16:05] [IP: 172.71.81.6] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-28 12:21:14] [IP: 172.69.176.149] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-28 18:35:51] [IP: 172.70.196.145] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-28 22:53:35] [IP: 172.69.176.148] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-29 00:43:57] [IP: 172.70.92.237] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-29 00:44:31] [IP: 172.70.92.237] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-29 06:23:16] [IP: 172.71.219.91] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 00:40:52] [IP: 172.71.214.15] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 00:41:52] [IP: 172.71.214.14] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 05:42:37] [IP: 172.68.211.44] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 05:43:05] [IP: 172.68.211.44] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 08:24:41] [IP: 108.162.226.154] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 18:11:52] [IP: 172.71.210.88] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-09-30 18:12:34] [IP: 172.71.210.89] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-01 08:30:39] [IP: 104.23.175.53] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-01 08:32:13] [IP: 162.158.170.202] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-01 08:33:23] [IP: 162.158.170.203] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-02 19:51:04] [IP: 172.70.248.170] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-02 19:56:06] [IP: 172.71.219.92] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-02 19:57:38] [IP: 162.158.193.41] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-03 21:58:04] [IP: 172.70.250.55] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-03 21:58:34] [IP: 162.158.193.40] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-03 21:59:33] [IP: 162.158.193.41] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-05 19:03:04] [IP: 172.69.150.70] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-05 19:03:35] [IP: 172.68.164.21] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:12:47] [IP: 172.71.81.206] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:14:34] [IP: 172.71.81.206] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:17:13] [IP: 162.158.189.151] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:22:32] [IP: 172.69.176.48] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:26:39] [IP: 162.158.88.166] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:33:15] [IP: 172.69.176.20] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-06 08:56:54] [IP: 172.69.166.13] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-08 15:13:54] [IP: 172.70.208.167] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-12 23:44:05] [IP: 172.71.246.206] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-12 23:47:26] [IP: 172.71.210.143] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-12 23:51:34] [IP: 172.68.225.140] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-13 00:00:24] [IP: 172.70.248.171] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-13 00:11:04] [IP: 162.158.178.170] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-13 00:16:12] [IP: 172.71.210.142] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-15 19:28:21] [IP: 172.70.143.243] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-15 21:26:39] [IP: 172.68.164.20] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-18 19:40:58] [IP: 172.70.208.167] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-18 19:43:17] [IP: 172.70.208.166] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-20 09:29:40] [IP: 162.158.163.235] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-21 11:27:05] [IP: 108.162.226.136] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-21 11:32:32] [IP: 162.158.88.60] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-21 11:33:53] [IP: 162.158.88.61] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-21 11:34:24] [IP: 162.158.88.61] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-10-21 11:35:05] [IP: 162.158.88.61] Telegram notification failed: {"ok":false,"error_code":400,"description":"Bad Request: PEER_ID_INVALID"}
+[2025-11-19 21:41:07] [IP: 172.71.81.6] Telegram notification failed: {"ok":false,"error_code":401,"description":"Unauthorized: USER_DEACTIVATED"}
+[2025-11-19 21:43:44] [IP: 172.71.124.153] Telegram notification failed: {"ok":false,"error_code":401,"description":"Unauthorized"}
+[2025-11-19 21:46:23] [IP: 162.158.163.132] Telegram notification failed: {"ok":false,"error_code":401,"description":"Unauthorized"}
+[2025-11-19 21:50:57] [IP: 104.23.175.45] Telegram notification failed: {"ok":false,"error_code":401,"description":"Unauthorized"}
+[2025-11-30 09:06:37] [IP: 162.158.193.62] Telegram notification failed: {"ok":false,"error_code":500,"description":"Internal Server Error"}
+[2025-11-30 09:09:06] [IP: 172.71.211.51] Telegram notification failed: {"ok":false,"error_code":401,"description":"Unauthorized"}
