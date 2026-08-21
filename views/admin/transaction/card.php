@@ -1,0 +1,192 @@
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/header.php'); ?>
+<?php
+$items_per_page = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $items_per_page;
+$telco = isset($_GET['telco']) ? Anti_xss($_GET['telco']) : '';
+$serial = isset($_GET['serial']) ? Anti_xss($_GET['serial']) : '';
+$code = isset($_GET['code']) ? Anti_xss($_GET['code']) : '';
+$start_date = isset($_GET['start_date']) ? Anti_xss($_GET['start_date']) : '';
+$end_date = isset($_GET['end_date']) ? Anti_xss($_GET['end_date']) : '';
+if (!empty($start_date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $start_date)) {
+    $start_date = '';
+}
+if (!empty($end_date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $end_date)) {
+    $end_date = '';
+}
+$where = [];
+if (!empty($telco)) {
+    $where[] = "t.telco LIKE '%$telco%'";
+}
+if (!empty($serial)) {
+    $where[] = "t.serial LIKE '%$serial%'";
+}
+if (!empty($code)) {
+    $where[] = "t.code LIKE '%$code%'";
+}
+if (!empty($start_date)) {
+    $where[] = "t.created_at >= '$start_date 00:00:00'";
+}
+if (!empty($end_date)) {
+    $where[] = "t.created_at <= '$end_date 23:59:59'";
+}
+
+$where_clause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
+
+$total_transactions = $db->get_row("SELECT COUNT(*) as total FROM `card_transactions` t $where_clause")['total'];
+$total_pages = ceil($total_transactions / $items_per_page);
+$transactions = $db->get_list("SELECT t.*, u.username, u.email,u.image,u.lastname,u.firstname FROM `card_transactions` t LEFT JOIN `users` u ON t.user_id = u.id $where_clause ORDER BY t.id DESC LIMIT $offset, $items_per_page");
+?>
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li>
+                <h5 class="bc-title">Giao dịch nạp thẻ</h5>
+            </li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Home </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Giao dịch nạp thẻ</a></li>
+        </ol>
+
+    </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header py-3 d-sm-flex d-block align-items-center">
+                        <h4 class="card-title">Giao dịch nạp thẻ</h4>
+                        <div class="clearfix">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-secondary w-100" id="dropdownMenuClickable" data-bs-auto-close="false" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-filter me-1"></i> Tìm kiếm </button>
+                                <div class="dropdown-menu dropdown-menu-sm-end dropdown-card card-dropdown-filter-centered filter_dropdown" aria-labelledby="dropdownMenuClickable">
+                                    <div class="card">
+                                        <div class="card-header card-header-content-between">
+                                            <h5 class="card-header-title">Tìm kiếm giao dịch</h5>
+                                            <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm ms-2" id="filter_close_btn">
+                                                <i class="fa fa-close"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <form action="" method="GET">
+                                                <div class="row">
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Nhà mạng</span>
+                                                        <input type="text" class="form-control" name="telco" value="<?= $telco ?>" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Serial</span>
+                                                        <input type="text" class="form-control" name="serial" value="<?= $serial ?>" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Mã thẻ</span>
+                                                        <input type="text" class="form-control" name="code" value="<?= $code ?>" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Từ ngày</span>
+                                                        <input type="date" class="form-control" name="start_date" value="<?= $start_date ?>">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Đến ngày</span>
+                                                        <input type="date" class="form-control" name="end_date" value="<?= $end_date ?>">
+                                                    </div>
+                                                </div>
+                                                <div class="d-grid">
+                                                    <button type="submit" id="filter_button" class="btn btn-primary mb-3">Tìm kiếm</button>
+                                                    <a href="/admin/transaction/card" type="button" id="filter_button" class="btn btn-danger">Bỏ lọc</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="card-body table-card-body px-0 pt-0 pb-2 p-3">
+                        <div class="table-responsive">
+                            <table id="employeesTable" class="table table-borderless table-nowrap table-align-middle card-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="mw-120">ID</th>
+                                        <th class="mw-150">REQUEST ID</th>
+                                        <th class="mw-150">NGƯỜI DÙNG</th>
+                                        <th class="mw-150">NHÀ MẠNG</th>
+                                        <th class="mw-150">SERIAL</th>
+                                        <th class="mw-150">MÃ THẺ</th>
+                                        <th class="mw-150">SỐ TIỀN</th>
+                                        <th class="mw-150">THỰC NHẬN</th>
+                                        <th class="mw-150">NỘI DUNG</th>
+                                        <th class="mw-150">TRẠNG THÁI</th>
+                                        <th class="mw-150">THỜI GIAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($transactions)): ?>
+                                        <?php foreach ($transactions as $transaction): ?>
+                                            <tr data-id="<?= $transaction['id'] ?>">
+                                                <td><span><?= $transaction['id'] ?></span></td>
+                                                <td><span><?= $transaction['request_id'] ?></span></td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <img src="<?= empty($transaction['image']) ? '/assets/images/default.png' : $transaction['image'] ?>" class="avatar avatar-sm me-2" alt="">
+                                                        <div class="clearfix">
+                                                            <h6 class="mb-0"><?= $transaction['lastname'] . ' ' . $transaction['firstname'] ?></h6>
+                                                            <small>@<?= $transaction['username'] ?></small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span><?= $transaction['telco'] ?></span></td>
+                                                <td><span><?= $transaction['serial'] ?></span></td>
+                                                <td><span><?= $transaction['code'] ?></span></td>
+                                                <td><span class="text-danger"><?= formatCurrencyF($transaction['amount']) ?></span></td>
+                                                <td><span class="text-success"><?= formatCurrencyF($transaction['real_amount']) ?></span></td>
+                                                <td><?= htmlspecialchars($transaction['message'] ?? 'N/A') ?></td>
+                                                <td><?= display_service_admin($transaction['status']) ?></td>
+                                                <td><?= $transaction['created_at'] ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="11" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có giao dịch nào</p>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php if ($total_pages > 1): ?>
+                            <div class="pagination">
+                                <?php if ($page > 1): ?>
+                                    <a href="?page=<?php echo $page - 1; ?>&telco=<?= $telco ?>&serial=<?= $serial ?>&code=<?= $code ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="nav-btn"><i class="fa fa-arrow-left"></i></a>
+                                <?php endif; ?>
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <a href="?page=<?php echo $i; ?>&telco=<?= $telco ?>&serial=<?= $serial ?>&code=<?= $code ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="<?php echo $i === $page ? 'active' : ''; ?>">
+                                        <?php echo $i; ?>
+                                    </a>
+                                <?php endfor; ?>
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?page=<?php echo $page + 1; ?>&telco=<?= $telco ?>&serial=<?= $serial ?>&code=<?= $code ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="nav-btn"><i class="fa fa-arrow-right"></i></a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/footer.php'); ?>

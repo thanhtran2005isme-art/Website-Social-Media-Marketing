@@ -1,0 +1,26 @@
+# Dependencies
+vendor/
+
+# Configuration files với thông tin nhạy cảm
+config.php
+
+# Log files
+*.log
+access_log.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+*.cache

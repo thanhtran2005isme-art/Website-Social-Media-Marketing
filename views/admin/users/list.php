@@ -1,0 +1,463 @@
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/header.php'); ?>
+<?php
+$items_per_page = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $items_per_page;
+$email = isset($_GET['email']) ? Anti_xss($_GET['email']) : '';
+$status = isset($_GET['status']) ? Anti_xss($_GET['status']) : '';
+$username = isset($_GET['username']) ? Anti_xss($_GET['username']) : '';
+
+$where = [];
+if (!empty($username)) {
+    $where[] = "username LIKE '%$username%'";
+}
+if (!empty($email)) {
+    $where[] = "email = '$email'";
+}
+if ($status === 'active') {
+    $where[] = "status = 1";
+} elseif ($status === 'inactive') {
+    $where[] = "status = 0";
+}
+$where_clause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
+
+$total_users = $db->get_row("SELECT COUNT(*) as total FROM `users`")['total'];
+$active_users = $db->get_row("SELECT COUNT(*) as total FROM `users` WHERE status = 1")['total'];
+$inactive_users = $db->get_row("SELECT COUNT(*) as total FROM `users` WHERE status = 0")['total'];
+$balance_users = formatCurrencyF($db->get_row("SELECT SUM(balance) as total FROM `users`")['total']);
+
+$total_users = $db->get_row("SELECT COUNT(*) as total FROM `users` $where_clause")['total'];
+$total_pages = ceil($total_users / $items_per_page);
+$users = $db->get_list("SELECT * FROM `users` $where_clause ORDER BY `id` DESC LIMIT $offset, $items_per_page");
+?>
+<div class="content-body">
+    <!-- row -->
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li>
+                <h5 class="bc-title">Quản lý người dùng</h5>
+            </li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Home </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Quản lý người dùng</a></li>
+        </ol>
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="avatar avatar-lg avatar-success rounded-circle border-0">
+                            <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M32.8961 26.5849C34.1612 26.5849 35.223 27.629 35.0296 28.8783C33.8947 36.2283 27.6026 41.6855 20.0138 41.6855C11.6178 41.6855 4.8125 34.8803 4.8125 26.4862C4.8125 19.5704 10.0664 13.1283 15.9816 11.6717C17.2526 11.3579 18.5553 12.252 18.5553 13.5605C18.5553 22.4263 18.8533 24.7197 20.5368 25.9671C22.2204 27.2145 24.2 26.5849 32.8961 26.5849Z" stroke="var(--bs-info)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M41.1733 19.2019C41.2739 13.5059 34.2772 4.32428 25.7509 4.48217C25.0877 4.49402 24.5568 5.04665 24.5272 5.70783C24.3121 10.3914 24.6022 16.4605 24.764 19.2118C24.8134 20.0684 25.4864 20.7414 26.341 20.7907C29.1693 20.9526 35.4594 21.1736 40.0759 20.4749C40.7035 20.3802 41.1634 19.8355 41.1733 19.2019Z" stroke="var(--bs-info)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <div class="ms-3">
+                            <h2 class="text-info mb-1"><?= $total_users ?></h2>
+                            <span class="fw-semibold text-secondary">Tổng người dùng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg avatar-info rounded-circle border-0">
+                                <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M32.8961 26.5849C34.1612 26.5849 35.223 27.629 35.0296 28.8783C33.8947 36.2283 27.6026 41.6855 20.0138 41.6855C11.6178 41.6855 4.8125 34.8803 4.8125 26.4862C4.8125 19.5704 10.0664 13.1283 15.9816 11.6717C17.2526 11.3579 18.5553 12.252 18.5553 13.5605C18.5553 22.4263 18.8533 24.7197 20.5368 25.9671C22.2204 27.2145 24.2 26.5849 32.8961 26.5849Z" stroke="var(--bs-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M41.1733 19.2019C41.2739 13.5059 34.2772 4.32428 25.7509 4.48217C25.0877 4.49402 24.5568 5.04665 24.5272 5.70783C24.3121 10.3914 24.6022 16.4605 24.764 19.2118C24.8134 20.0684 25.4864 20.7414 26.341 20.7907C29.1693 20.9526 35.4594 21.1736 40.0759 20.4749C40.7035 20.3802 41.1634 19.8355 41.1733 19.2019Z" stroke="var(--bs-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                            <div class="total-projects ms-3">
+                                <h2 class="text-success mb-1"><?= $active_users ?></h2>
+                                <span class="fw-semibold text-secondary">Đang hoạt động</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg avatar-danger rounded-circle border-0">
+                                <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M32.8961 26.5849C34.1612 26.5849 35.223 27.629 35.0296 28.8783C33.8947 36.2283 27.6026 41.6855 20.0138 41.6855C11.6178 41.6855 4.8125 34.8803 4.8125 26.4862C4.8125 19.5704 10.0664 13.1283 15.9816 11.6717C17.2526 11.3579 18.5553 12.252 18.5553 13.5605C18.5553 22.4263 18.8533 24.7197 20.5368 25.9671C22.2204 27.2145 24.2 26.5849 32.8961 26.5849Z" stroke="var(--bs-danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M41.1733 19.2019C41.2739 13.5059 34.2772 4.32428 25.7509 4.48217C25.0877 4.49402 24.5568 5.04665 24.5272 5.70783C24.3121 10.3914 24.6022 16.4605 24.764 19.2118C24.8134 20.0684 25.4864 20.7414 26.341 20.7907C29.1693 20.9526 35.4594 21.1736 40.0759 20.4749C40.7035 20.3802 41.1634 19.8355 41.1733 19.2019Z" stroke="var(--bs-danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                            <div class="total-projects ms-3">
+                                <h2 class="text-danger mb-1"><?= $inactive_users ?></h2>
+                                <span class="fw-semibold text-secondary">Không hoạt động</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg avatar-dark rounded-circle border-0">
+                                <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M32.8961 26.5849C34.1612 26.5849 35.223 27.629 35.0296 28.8783C33.8947 36.2283 27.6026 41.6855 20.0138 41.6855C11.6178 41.6855 4.8125 34.8803 4.8125 26.4862C4.8125 19.5704 10.0664 13.1283 15.9816 11.6717C17.2526 11.3579 18.5553 12.252 18.5553 13.5605C18.5553 22.4263 18.8533 24.7197 20.5368 25.9671C22.2204 27.2145 24.2 26.5849 32.8961 26.5849Z" stroke="var(--bs-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M41.1733 19.2019C41.2739 13.5059 34.2772 4.32428 25.7509 4.48217C25.0877 4.49402 24.5568 5.04665 24.5272 5.70783C24.3121 10.3914 24.6022 16.4605 24.764 19.2118C24.8134 20.0684 25.4864 20.7414 26.341 20.7907C29.1693 20.9526 35.4594 21.1736 40.0759 20.4749C40.7035 20.3802 41.1634 19.8355 41.1733 19.2019Z" stroke="var(--bs-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                            <div class="total-projects ms-3">
+                                <h2 class="text-dark mb-1"><?= $balance_users ?></h2>
+                                <span class="fw-semibold text-secondary">Số dư</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header py-3 d-sm-flex d-block align-items-center">
+                        <h4 class="card-title">Danh sách người dùng</h4>
+                        <div class="clearfix">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUsersModal">+ Thêm mới</button>
+                        </div>
+                    </div>
+                    <div class="card-header d-block pb-2">
+                        <form action="" method="GET" class="row align-items-end">
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <label class="form-label">Tài khoản</label>
+                                <input type="text" class="form-control" name="username" value="<?= $username ?>">
+                            </div>
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="text" class="form-control" name="email" value="<?= $email ?>">
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select name="status" class="selectpicker form-select">
+                                    <option value="">All</option>
+                                    <option value="active" <?= $status == "active" ? 'selected' : '' ?>>Hoạt động</option>
+                                    <option value="inactive" <?= $status == "inactive" ? 'selected' : '' ?>>Không hoạt động</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                <a href="/admin/users" class="btn btn-danger light ms-2" type="button">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body table-card-body px-0 pt-0 pb-2 p-3">
+                        <div class="table-responsive">
+                            <table id="employeesTable" class="table table-borderless table-nowrap table-align-middle card-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="mw-120">ID</th>
+                                        <th class="mw-150">HỌ VÀ TÊN</th>
+                                        <th class="mw-150">Email-Phone</th>
+                                        <th class="mw-150">SỐ DƯ</th>
+                                        <th class="mw-150">QUỐC GIA</th>
+                                        <th class="mw-150">TRẠNG THÁI</th>
+                                        <th class="mw-150">ĐĂNG NHẬP LẦN CUỐI</th>
+                                        <th class="mw-100">THAO TÁC</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($users)): ?>
+                                        <?php foreach ($users as $user): ?>
+                                            <tr data-id="<?= $user['id'] ?>">
+                                                <td><span><?= $user['id'] ?></span></td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <img src="<?= empty($user['image']) ? '/assets/images/default.png' : $user['image'] ?>" class="avatar avatar-sm me-2" alt="">
+                                                        <div class="clearfix">
+                                                            <h6 class="mb-0"><?= $user['lastname'] . ' ' . $user['firstname'] ?></h6>
+                                                            <small>@<?= $user['username'] ?></small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="clearfix">
+                                                        <h6 class="mb-0"><?= $user['email'] ?></h6>
+                                                        <small><?= $user['phone'] ?></small>
+                                                    </div>
+                                                </td>
+                                                <td><span><?= formatCurrencyF($user['balance']) ?></span></td>
+                                                <td><?= htmlspecialchars($user['country'] ?? 'N/A') ?></td>
+                                                <td><?= $user['status'] == 1 ? '<span class="badge badge-success light">Hiển thị</span>' : '<span class="badge badge-danger light">Ẩn</span>' ?></td>
+                                                <td><?= timeAgo2($user['last_login']) ?></td>
+                                                <td>
+                                                    <a href="/admin/user/edit/<?= $user['id'] ?>" type="button" class="btn btn-primary btn-square-2 btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                                    <button type="button" class="btn btn-danger btn-square-2 btn-sm ms-1 delete-btn"><i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="4" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có danh mục nào được tạo</p>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php if ($total_pages > 1): ?>
+                            <div class="pagination">
+                                <?php if ($page > 1): ?>
+                                    <a href="?page=<?php echo $page - 1; ?>&username=<?= urlencode($username) ?>&email=<?= urlencode($email) ?>&status=<?= urlencode($status) ?>" class="nav-btn"><i class="fa fa-arrow-left"></i></a>
+                                <?php endif; ?>
+                                <?php
+                                $range = 2;
+                                $show_ellipsis = $total_pages > 7;
+
+                                if ($page == 1) {
+                                    echo '<a href="?page=1&username=' . urlencode($username) . '&email=' . urlencode($email) . '&status=' . urlencode($status) . '" class="active">1</a>';
+                                } else {
+                                    echo '<a href="?page=1&username=' . urlencode($username) . '&email=' . urlencode($email) . '&status=' . urlencode($status) . '">1</a>';
+                                }
+
+                                if ($show_ellipsis && $page > ($range + 2)) {
+                                    echo '<span class="ellipsis">...</span>';
+                                }
+
+                                for ($i = max(2, $page - $range); $i <= min($total_pages - 1, $page + $range); $i++) {
+                                    if ($i == $page) {
+                                        echo '<a href="?page=' . $i . '&username=' . urlencode($username) . '&email=' . urlencode($email) . '&status=' . urlencode($status) . '" class="active">' . $i . '</a>';
+                                    } else {
+                                        echo '<a href="?page=' . $i . '&username=' . urlencode($username) . '&email=' . urlencode($email) . '&status=' . urlencode($status) . '">' . $i . '</a>';
+                                    }
+                                }
+
+                                if ($show_ellipsis && $page < ($total_pages - $range - 1)) {
+                                    echo '<span class="ellipsis">...</span>';
+                                }
+
+                                
+                                if ($total_pages > 1) {
+                                    if ($page == $total_pages) {
+                                        echo '<a href="?page=' . $total_pages . '&username=' . urlencode($username) . '&email=' . urlencode($email) . '&status=' . urlencode($status) . '" class="active">' . $total_pages . '</a>';
+                                    } else {
+                                        echo '<a href="?page=' . $total_pages . '&username=' . urlencode($username) . '&email=' . urlencode($email) . '&status=' . urlencode($status) . '">' . $total_pages . '</a>';
+                                    }
+                                }
+                                ?>
+
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?page=<?php echo $page + 1; ?>&username=<?= urlencode($username) ?>&email=<?= urlencode($email) ?>&status=<?= urlencode($status) ?>" class="nav-btn"><i class="fa fa-arrow-right"></i></a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="addUsersModal" tabindex="-1" aria-labelledby="addUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUsersModalLabel">Thêm nhiều người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUsersForm">
+                    <div id="userEntries">
+                        <div class="user-entry row mb-2">
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Tài khoản</label>
+                                <input type="text" class="form-control" name="users[0][username]" required>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="users[0][email]" required>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" name="users[0][password]" required>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Số dư</label>
+                                <input type="number" class="form-control" name="users[0][balance]" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end mb-2">
+                                <button type="button" class="btn btn-danger btn-sm remove-entry">X</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm mb-3" id="addUserEntry">+ Thêm người dùng</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="submitUsers">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        let userEntryCount = 1;
+
+        // Add new user entry
+        $('#addUserEntry').on('click', function() {
+            const newEntry = `
+        <div class="user-entry row mb-2">
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Tài khoản</label>
+                <input type="text" class="form-control" name="users[${userEntryCount}][username]" required>
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="users[${userEntryCount}][email]" required>
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" class="form-control" name="users[${userEntryCount}][password]" required>
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="form-label">Số dư</label>
+                <input type="number" class="form-control" name="users[${userEntryCount}][balance]" min="0" step="0.01" required>
+            </div>
+            <div class="col-md-1 d-flex align-items-end mb-2">
+                <button type="button" class="btn btn-danger btn-sm remove-entry">X</button>
+            </div>
+        </div>`;
+            $('#userEntries').append(newEntry);
+            userEntryCount++;
+        });
+
+        // Remove user entry
+        $(document).on('click', '.remove-entry', function() {
+            if ($('.user-entry').length > 1) {
+                $(this).closest('.user-entry').remove();
+            } else {
+                Notiflix.Notify.warning('Phải có ít nhất một người dùng.');
+            }
+        });
+
+        // Submit form via AJAX
+        $('#submitUsers').on('click', function() {
+            const form = $('#addUsersForm');
+            if (form[0].checkValidity()) {
+                Notiflix.Loading.standard('Đang xử lý...');
+                $.ajax({
+                    url: '/model/admin/add/users',
+                    type: 'POST',
+                    data: form.serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        Notiflix.Loading.remove();
+                        if (response.status === 'success') {
+                            Notiflix.Notify.success('Thêm người dùng thành công!');
+                            $('#addUsersModal').modal('hide');
+                            form[0].reset();
+                            $('#userEntries').html(`
+                        <div class="user-entry row mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label">Tài khoản</label>
+                                <input type="text" class="form-control" name="users[0][username]" required>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="users[0][email]" required>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" name="users[0][password]" required>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Số dư</label>
+                                <input type="number" class="form-control" name="users[0][balance]" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end mb-2">
+                                <button type="button" class="btn btn-danger btn-sm remove-entry">X</button>
+                            </div>
+                        </div>
+                    `);
+                            userEntryCount = 1;
+                            location.reload(); // Refresh page to show new users
+                        } else {
+                            Notiflix.Notify.failure(response.message || 'Có lỗi xảy ra khi thêm người dùng.');
+                        }
+                    },
+                    error: function() {
+                        Notiflix.Loading.remove();
+                        Notiflix.Notify.failure('Lỗi kết nối server.');
+                    }
+                });
+            } else {
+                form[0].reportValidity();
+            }
+        });
+        $('.delete-btn').on('click', function() {
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+
+            Notiflix.Confirm.show(
+                'Xác nhận xóa',
+                'Bạn có chắc chắn muốn xóa người dùng này?',
+                'Có',
+                'Không',
+                function okCb() {
+                    Notiflix.Loading.standard('Đang xử lý...');
+
+                    $.ajax({
+                        url: '/model/admin/delete',
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            action: 'removeUser'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            Notiflix.Loading.remove();
+                            if (response.status == "success") {
+                                Notiflix.Notify.success('Xóa người dùng thành công');
+                                row.fadeOut(300, function() {
+                                    $(this).remove();
+                                    if ($('#employeesTable tbody tr').length === 0) {
+                                        $('#employeesTable tbody').html(`
+                                        <tr>
+                                            <td colspan="8" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có người dùng nào</p>
+                                            </td>
+                                        </tr>
+                                    `);
+                                    }
+                                });
+                            } else {
+                                Notiflix.Notify.failure(response.msg || 'Có lỗi xảy ra khi xóa');
+                            }
+                        },
+                        error: function() {
+                            Notiflix.Loading.remove();
+                            Notiflix.Notify.failure('Lỗi kết nối server');
+                        }
+                    });
+                },
+                function cancelCb() {
+                    // Do nothing on cancel
+                }
+            );
+        });
+    });
+</script>
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/footer.php'); ?>

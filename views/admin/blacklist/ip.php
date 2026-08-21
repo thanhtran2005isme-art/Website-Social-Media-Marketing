@@ -1,0 +1,273 @@
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/header.php'); ?>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ip']) && $data_user['role'] == 1) {
+    if ($general_data['status_demo'] == 1) {
+        alertBack("Đây là trang web demo bạn không thể thực hiện thao tác");
+    }
+
+    $ip = Anti_xss($_POST['ip']);
+    $reason = isset($_POST['reason']) ? Anti_xss($_POST['reason']) : '';
+
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        alertBack("Địa chỉ IP không hợp lệ!");
+    }
+
+    $data = [
+        'ip' => $ip,
+        'reason' => $reason,
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s')
+    ];
+
+    if ($db->insert('blacklist_ips', $data)) {
+        alertBack("Thêm IP vào danh sách đen thành công!", true);
+    } else {
+        alertBack("Lỗi khi thêm IP!");
+    }
+}
+
+$items_per_page = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $items_per_page;
+$reason = isset($_GET['reason']) ? Anti_xss($_GET['reason']) : '';
+$ip = isset($_GET['ip']) ? Anti_xss($_GET['ip']) : '';
+$start_date = isset($_GET['start_date']) ? Anti_xss($_GET['start_date']) : '';
+$end_date = isset($_GET['end_date']) ? Anti_xss($_GET['end_date']) : '';
+if (!empty($start_date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $start_date)) {
+    $start_date = '';
+}
+if (!empty($end_date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $end_date)) {
+    $end_date = '';
+}
+$where = [];
+if (!empty($reason)) {
+    $where[] = "reason LIKE '%$reason%'";
+}
+if (!empty($ip)) {
+    $where[] = "ip LIKE '%$ip%'";
+}
+if (!empty($start_date)) {
+    $where[] = "created_at >= '$start_date 00:00:00'";
+}
+if (!empty($end_date)) {
+    $where[] = "created_at <= '$end_date 23:59:59'";
+}
+
+$where_clause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
+
+$total = $db->get_row("SELECT COUNT(*) as total FROM `blacklist_ips` $where_clause")['total'];
+$total_pages = ceil($total / $items_per_page);
+$blacklist = $db->get_list("SELECT * FROM `blacklist_ips` $where_clause ORDER BY id DESC LIMIT $offset, $items_per_page");
+
+?>
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li>
+                <h5 class="bc-title">Danh sách đen IP</h5>
+            </li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Home </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Danh sách đen IP</a></li>
+        </ol>
+
+    </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header py-3 d-sm-flex d-block align-items-center">
+                        <h4 class="card-title">Danh sách đen IP</h4>
+                        <div class="ms-auto d-flex align-items-center">
+                            <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addBlacklistModal">Thêm mới</button>
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-secondary btn-sm w-100" id="dropdownMenuClickable" data-bs-auto-close="false" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="sp4s9">
+                                    <i class="fa fa-filter me-1"></i> Tìm kiếm </button>
+                                <div class="dropdown-menu dropdown-menu-sm-end dropdown-card card-dropdown-filter-centered filter_dropdown" aria-labelledby="dropdownMenuClickable" style="">
+                                    <div class="card">
+                                        <div class="card-header card-header-content-between">
+                                            <h5 class="card-header-title">Tìm kiếm</h5>
+                                            <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm ms-2" id="filter_close_btn">
+                                                <i class="fa fa-close"></i>
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="" method="GET">
+                                                <div class="row">
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">IP</span>
+                                                        <input type="text" class="form-control" name="ip" value="<?= $ip ?>" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Lý do</span>
+                                                        <input type="text" class="form-control" name="reason" value="<?= $reason ?>" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Từ ngày</span>
+                                                        <input type="date" class="form-control" name="start_date" value="<?= $start_date ?>">
+                                                    </div>
+                                                    <div class="col-12 mb-4">
+                                                        <span class="text-cap text-body">Đến ngày</span>
+                                                        <input type="date" class="form-control" name="end_date" value="<?= $end_date ?>">
+                                                    </div>
+                                                </div>
+                                                <div class="d-grid">
+                                                    <button type="submit" id="filter_button" class="btn btn-primary mb-3">Tìm kiếm</button>
+                                                    <a href="/admin/blacklist/ip" type="button" id="filter_button" class="btn btn-danger">Bỏ lọc</a>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body table-card-body px-0 pt-0 pb-2 p-3">
+                        <div class="table-responsive">
+                            <table id="employeesTable" class="table table-borderless table-nowrap table-align-middle card-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="mw-120">ID</th>
+                                        <th class="mw-150">IP</th>
+                                        <th class="mw-150">LÝ DO</th>
+                                        <th class="mw-150">THỜI GIAN</th>
+                                        <th class="mw-150">THAO TÁC</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($blacklist)): ?>
+                                        <?php foreach ($blacklist as $blacklist): ?>
+                                            <tr data-id="<?= $blacklist['id'] ?>">
+                                                <td><span><?= $blacklist['id'] ?></span></td>
+                                                <td><span class="text-danger"><?= $blacklist['ip'] ?></span></td>
+                                                <td><span><?= $blacklist['reason'] ?></span></td>
+                                                <td><?= $blacklist['created_at'] ?></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-square-2 btn-sm ms-1 delete-btn"><i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có danh sách đen IP nào được tạo</p>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php if ($total_pages > 1): ?>
+                            <div class="pagination">
+                                <?php if ($page > 1): ?>
+                                    <a href="?page=<?php echo $page - 1; ?>&reason=<?= $reason ?>&ip=<?= $ip ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="nav-btn"><i class="fa fa-arrow-left"></i></a>
+                                <?php endif; ?>
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <a href="?page=<?php echo $i; ?>&reason=<?= $reason ?>&ip=<?= $ip ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="<?php echo $i === $page ? 'active' : ''; ?>">
+                                        <?php echo $i; ?>
+                                    </a>
+                                <?php endfor; ?>
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?page=<?php echo $page + 1; ?>&reason=<?= $reason ?>&ip=<?= $ip ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="nav-btn"><i class="fa fa-arrow-right"></i></a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="addBlacklistModal" tabindex="-1" aria-labelledby="addBlacklistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBlacklistModalLabel">Thêm IP vào danh sách đen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addBlacklistForm" method="POST" action="">
+                    <div class="mb-3">
+                        <label for="ip" class="form-label">Địa chỉ IP <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="ip" name="ip" required placeholder="Ví dụ: 123.456.789.000">
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Lý do (tùy chọn)</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="4" placeholder="Nhập lý do chặn IP"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Thêm IP</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.delete-btn').on('click', function() {
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+
+            Notiflix.Confirm.show(
+                'Xác nhận xóa',
+                'Bạn có chắc chắn muốn xóa IP này khỏi danh sách chặn?',
+                'Có',
+                'Không',
+                function okCb() {
+                    Notiflix.Loading.standard('Đang xử lý...');
+
+                    $.ajax({
+                        url: '/model/admin/delete',
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            action: 'removeIP'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            Notiflix.Loading.remove();
+                            if (response.status == "success") {
+                                Notiflix.Notify.success('Xóa thành công');
+                                row.fadeOut(300, function() {
+                                    $(this).remove();
+                                    if ($('#employeesTable tbody tr').length === 0) {
+                                        $('#employeesTable tbody').html(`
+                                        <tr>
+                                            <td colspan="5" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có danh sách đen IP nào được tạo</p>
+                                            </td>
+                                        </tr>
+                                    `);
+                                    }
+                                });
+                            } else {
+                                Notiflix.Notify.failure(response.msg || 'Có lỗi xảy ra khi xóa');
+                            }
+                        },
+                        error: function() {
+                            Notiflix.Loading.remove();
+                            Notiflix.Notify.failure('Lỗi kết nối server');
+                        }
+                    });
+                },
+                function cancelCb() {
+                    // Do nothing on cancel
+                }
+            );
+        });
+
+    });
+</script>
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/footer.php'); ?>

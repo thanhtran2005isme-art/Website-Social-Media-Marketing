@@ -1,0 +1,219 @@
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/header.php'); ?>
+<?php
+$items_per_page = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $items_per_page;
+$name = isset($_GET['name']) ? Anti_xss($_GET['name']) : '';
+$status = isset($_GET['status']) ? Anti_xss($_GET['status']) : '';
+
+$where = [];
+if (!empty($name)) {
+    $where[] = "name LIKE '%$name%'";
+}
+
+if ($status === 'active') {
+    $where[] = "status = 1";
+} elseif ($status === 'inactive') {
+    $where[] = "status = 0";
+}
+$where_clause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
+
+$total = $db->get_row("SELECT COUNT(*) as total FROM `currencies` $where_clause")['total'];
+$total_pages = ceil($total / $items_per_page);
+$currencies = $db->get_list("SELECT * FROM `currencies` $where_clause ORDER BY `id` DESC LIMIT $offset, $items_per_page");
+?>
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li>
+                <h5 class="bc-title">Quản lý tiền tệ</h5>
+            </li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Home </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Quản lý tiền tệ</a></li>
+        </ol>
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header py-3 d-sm-flex d-block align-items-center">
+                        <h4 class="card-title">Quản lý tiền tệ</h4>
+                        <div class="clearfix">
+
+                            <a href="/admin/currency/create" class="btn btn-primary btn-sm" role="button">+ Thêm mới</a>
+                        </div>
+                    </div>
+                    <div class="card-header d-block pb-2">
+                        <form action="" method="GET" class="row align-items-end">
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <label class="form-label">Tên tiền tệ</label>
+                                <input type="text" class="form-control" name="name" value="<?= $name ?>">
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select name="status" class="selectpicker form-select">
+                                    <option value="">All</option>
+                                    <option value="active" <?= $status == "active" ? 'selected' : '' ?>>Hoạt động</option>
+                                    <option value="inactive" <?= $status == "inactive" ? 'selected' : '' ?>>Không hoạt động</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-6 col-lg-4 mb-3">
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                <a href="/admin/currency" class="btn btn-danger light ms-2" type="button">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body table-card-body px-0 pt-0 pb-2 p-3">
+                        <div class="table-responsive">
+                            <table id="employeesTable" class="table table-borderless table-nowrap table-align-middle card-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="mw-120">ID</th>
+                                        <th class="mw-150">Tên tiền tệ</th>
+                                        <th class="mw-150">Mã tiền tệ</th>
+                                        <th class="mw-150">Ký hiệu</th>
+                                        <th class="mw-150">Tỷ giá</th>
+                                        <th class="mw-100">Tách đơn vị ngàn</th>
+                                        <th class="mw-100">Phân số thập phân</th>
+                                        <th class="mw-100">Số thập phân của tiền tệ</th>
+                                        <th class="mw-100">Trạng thái</th>
+                                        <th class="mw-100">Thời gian</th>
+                                        <th class="mw-100">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($currencies)): ?>
+                                        <?php foreach ($currencies as $currency): ?>
+                                            <tr data-id="<?= $currency['id'] ?>">
+                                                
+                                                <td><span><?= $currency['id'] ?></span></td>
+                                                <td>
+                                                    <?= $currency['name'] ?>
+                                                </td>
+                                                <td>
+                                                    <?= $currency['currency_code'] ?>
+                                                </td>
+                                                <td>
+                                                    <?= $currency['currency_symbol'] ?>
+                                                </td>
+                                                <td>
+                                                    <?= $currency['new_currecry_rate'] ?>
+                                                </td>
+                                                <td>
+                                                    <?= $currency['currency_thousand_separator'] ?>
+                                                </td>
+                                                <td>
+                                                    <?= $currency['currency_decimal_separator'] ?>
+                                                </td>
+                                                <td>
+                                                    <?= $currency['currency_decimal'] ?>
+                                                </td>
+                                                <td><?= $currency['status'] == 1 ? '<span class="badge badge-success light">Hiển thị</span>' : '<span class="badge badge-danger light">Ẩn</span>' ?></td>
+                                                <td><?= $currency['created_at'] ?></td>
+                                                <td>
+                                                    <a href="/admin/currency/edit/<?= $currency['id'] ?>" type="button" class="btn btn-primary btn-square-2 btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                                    <button type="button" class="btn btn-danger btn-square-2 btn-sm ms-1 delete-btn"><i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="11" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có tiền tệ nào được tạo</p>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php if ($total_pages > 1): ?>
+                            <div class="pagination">
+                                <?php if ($page > 1): ?>
+                                    <a href="?page=<?php echo $page - 1; ?>&name=<?= $name ?>&status=<?= $status ?>" class="nav-btn"><i class="fa fa-arrow-left"></i></a>
+                                <?php endif; ?>
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <a href="?page=<?php echo $i; ?>&name=<?= $name ?>&status=<?= $status ?>" class="<?php echo $i === $page ? 'active' : ''; ?>">
+                                        <?php echo $i; ?>
+                                    </a>
+                                <?php endfor; ?>
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?page=<?php echo $page + 1; ?>&name=<?= $name ?>&status=<?= $status ?>" class="nav-btn"><i class="fa fa-arrow-right"></i></a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.delete-btn').on('click', function() {
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+
+            Notiflix.Confirm.show(
+                'Xác nhận xóa',
+                'Bạn có chắc chắn muốn xóa tiền tệ này?',
+                'Có',
+                'Không',
+                function okCb() {
+                    Notiflix.Loading.standard('Đang xử lý...');
+
+                    $.ajax({
+                        url: '/model/admin/delete',
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            action: 'removeCurrency'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            Notiflix.Loading.remove();
+                            if (response.status == "success") {
+                                Notiflix.Notify.success('Xóa tiền tệ thành công');
+                                row.fadeOut(300, function() {
+                                    $(this).remove();
+                                    if ($('#employeesTable tbody tr').length === 0) {
+                                        $('#employeesTable tbody').html(`
+                                        <tr>
+                                            <td colspan="11" class="py-3 px-4 text-center text-dark">
+                                                <img src="/assets/images/empty.png" width="100" />
+                                                <p>Chưa có tiền tệ nào được tạo</p>
+                                            </td>
+                                        </tr>
+                                    `);
+                                    }
+                                });
+                            } else {
+                                Notiflix.Notify.failure(response.msg || 'Có lỗi xảy ra khi xóa');
+                            }
+                        },
+                        error: function() {
+                            Notiflix.Loading.remove();
+                            Notiflix.Notify.failure('Lỗi kết nối server');
+                        }
+                    });
+                },
+                function cancelCb() {
+                    // Do nothing on cancel
+                }
+            );
+        });
+    });
+</script>
+<?php require_once realpath($_SERVER['DOCUMENT_ROOT'] . '/views/admin/footer.php'); ?>
