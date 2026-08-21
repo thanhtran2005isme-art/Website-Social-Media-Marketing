@@ -1,8 +1,8 @@
 # Dependencies
-vendor/
+# vendor/
 
 # Configuration files với thông tin nhạy cảm
-config.php
+# config.php
 
 # Log files
 *.log
